@@ -23,12 +23,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full w-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex">
+      <body className="min-h-full min-w-full flex">
         <ThemeProvider attribute="class">
-          <Theme className="flex flex-1 flex-col">{children}</Theme>
+          <Theme className="flex flex-1">{children}</Theme>
         </ThemeProvider>
       </body>
     </html>
