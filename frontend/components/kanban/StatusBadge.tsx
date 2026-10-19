@@ -1,6 +1,6 @@
-export type TaskStatus = "new" | "in-progress" | "done" | "archive";
+import { TaskStatus } from "../types";
 
-type StatusTagProps = {
+export type StatusTagProps = {
   status: TaskStatus;
 };
 
@@ -27,7 +27,7 @@ const STATUS_STYLES: Record<TaskStatus, { label: string; className: string }> =
     },
   };
 
-export const StatusTag = ({ status }: StatusTagProps) => {
+const StatusTag = ({ status }: StatusTagProps) => {
   const { label, className } = STATUS_STYLES[status];
 
   return (
@@ -38,3 +38,5 @@ export const StatusTag = ({ status }: StatusTagProps) => {
     </span>
   );
 };
+
+export default StatusTag;

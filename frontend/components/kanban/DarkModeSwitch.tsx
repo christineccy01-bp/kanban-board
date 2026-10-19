@@ -11,7 +11,7 @@ const DarkModeSwitch = () => {
       <label
         id="dark-mode-label"
         htmlFor="dark-mode"
-        className="pr-[8px] text-[15px] leading-none text-black dark:text-white"
+        className="pr-2 text-sm leading-none text-black dark:text-white"
       >
         Dark mode
       </label>
@@ -24,7 +24,7 @@ const DarkModeSwitch = () => {
         <Switch.Thumb
           id="dark-mode"
           aria-labelledby="dark-mode-label"
-          className="block size-[21px] translate-x-0.5 rounded-full bg-white shadow-[0_2px_2px] shadow-black transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]"
+          className="block size-[21px] translate-x-0.5 rounded-full bg-white shadow-sm transition-transform duration-100 will-change-transform data-[state=checked]:translate-x-[19px]"
         />
       </Switch.Root>
     </div>
