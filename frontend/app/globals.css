@@ -5,8 +5,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  --background: var(--color-neutral-100);
+  --foreground: var(--color-neutral-900);
 }
 
 @theme inline {
@@ -17,8 +17,8 @@
 }
 
 .dark {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: var(--color-neutral-900);
+  --foreground: var(--color-neutral-100);
 }
 
 body {

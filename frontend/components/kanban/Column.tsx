@@ -14,7 +14,7 @@ const Column = ({ column, tasks }: ColumnProps) => {
   });
 
   return (
-    <div className="flex min-w-0 flex-1 flex-col rounded-lg bg-slate-200 dark:bg-slate-800 p-4">
+    <div className="flex min-w-0 flex-1 flex-col rounded-lg bg-slate-200 dark:bg-neutral-950 p-4">
       <h2 className="mb-4 font-semibold text-neutral-800 dark:text-neutral-100">{column.title}</h2>
       <div ref={setNodeRef} className="flex flex-1 flex-col gap-4">
         {tasks.map((task) => {

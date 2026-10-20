@@ -28,7 +28,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full min-w-full flex">
         <ThemeProvider attribute="class">
-          <Theme className="flex flex-1">{children}</Theme>
+          <Theme hasBackground={false} className="flex flex-1">{children}</Theme>
         </ThemeProvider>
       </body>
     </html>

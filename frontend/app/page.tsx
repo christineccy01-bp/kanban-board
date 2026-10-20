@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState, MouseEvent } from "react";
 import DarkModeSwitch from "@/components/kanban/DarkModeSwitch";
 import Column from "@/components/kanban/Column";
 import { ColumnType } from "@/components/types";
 import { CardProps } from "@/components/kanban/TaskCard";
 import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import Button from "@/components/kanban/Button";
 
 const COLUMNS: ColumnType[] = [
   { id: 'new', title: 'New' },
@@ -43,6 +44,7 @@ const INITIAL_TASKS: CardProps[] = [
 
 export default function Home() {
   const [tasks, setTasks] = useState<CardProps[]>(INITIAL_TASKS);
+  const dndContextId = useId();
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -64,14 +66,23 @@ export default function Home() {
     );
   }
 
+  const handleAddTask = (event: MouseEvent) => {
+    // add new task code goes here
+  }
+
   return (
-    <main className="flex flex-1 flex-col items-center gap-4 p-8 font-sans">
+    <main className="flex flex-1 flex-col gap-6 p-8 font-sans">
       <menu className="flex justify-between w-full">
         <h1 className="text-2xl font-bold">My Kanban Board</h1>
         <DarkModeSwitch />
       </menu>
+      <div className="flex justify-end">
+        <Button onClick={handleAddTask}>
+          Add New Task
+        </Button>
+      </div>
       <div className="flex flex-1 gap-8 w-full">
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext id={dndContextId} onDragEnd={handleDragEnd}>
           {COLUMNS.map((column) => {
             return (
               <Column
