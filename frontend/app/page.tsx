@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import DarkModeSwitch from "@/components/kanban/DarkModeSwitch";
 import Column from "@/components/kanban/Column";
 import { ColumnType } from "@/components/types";
@@ -43,6 +43,7 @@ const INITIAL_TASKS: CardProps[] = [
 
 export default function Home() {
   const [tasks, setTasks] = useState<CardProps[]>(INITIAL_TASKS);
+  const dndContextId = useId();
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -71,7 +72,7 @@ export default function Home() {
         <DarkModeSwitch />
       </menu>
       <div className="flex flex-1 gap-8 w-full">
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext id={dndContextId} onDragEnd={handleDragEnd}>
           {COLUMNS.map((column) => {
             return (
               <Column
