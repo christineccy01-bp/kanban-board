@@ -5,7 +5,14 @@ import DarkModeSwitch from "@/components/kanban/DarkModeSwitch";
 import Column from "@/components/kanban/Column";
 import { ColumnType } from "@/components/types";
 import { CardProps } from "@/components/kanban/TaskCard";
-import { DndContext, DragEndEvent } from '@dnd-kit/core';
+import {
+  DndContext,
+  DragEndEvent,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import Button from "@/components/kanban/Button";
 
 const COLUMNS: ColumnType[] = [
@@ -45,6 +52,11 @@ const INITIAL_TASKS: CardProps[] = [
 export default function Home() {
   const [tasks, setTasks] = useState<CardProps[]>(INITIAL_TASKS);
   const dndContextId = useId();
+  // Require a small movement before dragging so a plain click opens the task details
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor),
+  );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -82,7 +94,7 @@ export default function Home() {
         </Button>
       </div>
       <div className="flex flex-1 gap-8 w-full">
-        <DndContext id={dndContextId} onDragEnd={handleDragEnd}>
+        <DndContext id={dndContextId} sensors={sensors} onDragEnd={handleDragEnd}>
           {COLUMNS.map((column) => {
             return (
               <Column
