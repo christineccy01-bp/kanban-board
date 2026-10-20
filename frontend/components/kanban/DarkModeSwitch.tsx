@@ -1,10 +1,20 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import { Switch } from "radix-ui";
 import { useTheme } from "next-themes";
 
+const noopSubscribe = () => () => {};
+
 const DarkModeSwitch = () => {
   const { resolvedTheme, setTheme } = useTheme();
+  
+  // The theme is unknown during SSR, so only reflect it once hydrated
+  const isHydrated = useSyncExternalStore(
+    noopSubscribe,
+    () => true,
+    () => false,
+  );
 
   return (
     <div className="flex items-center">
@@ -16,9 +26,9 @@ const DarkModeSwitch = () => {
         Dark mode
       </label>
       <Switch.Root
-        className="relative h-[25px] w-[42px] cursor-pointer rounded-full bg-slate-300 data-[state=checked]:bg-slate-500"
+        className="relative h-[25px] w-[42px] cursor-pointer rounded-full bg-slate-300 data-[state=checked]:bg-neutral-600"
         id="dark-mode"
-        checked={resolvedTheme === "dark"}
+        checked={isHydrated && resolvedTheme === "dark"}
         onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
       >
         <Switch.Thumb
