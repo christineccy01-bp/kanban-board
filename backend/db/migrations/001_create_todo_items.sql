@@ -3,5 +3,5 @@ CREATE TABLE todo_items (
     title TEXT NOT NULL,
     description TEXT NOT NULL,
     status CHAR(1) NOT NULL DEFAULT ('N') CHECK (status IN('N', 'P', 'D', 'A')),
-    createdAt TIMESTAMP NOT NULL DEFAULT NOW()
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );
