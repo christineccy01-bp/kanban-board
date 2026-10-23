@@ -38,6 +38,7 @@ export default function Home() {
       .then((data) => {
         const mapped = data.map((item:any) => ({
           ...item,
+          id: item.todo_item_id,
           status: STATUS_MAP[item.status],
         }));
         setTasks(mapped);
@@ -95,7 +96,7 @@ export default function Home() {
           {COLUMNS.map((column) => {
             return (
               <Column
-                key={column.id}
+                key={`column-${column.id}`}
                 column={column}
                 tasks={tasks.filter((task) => task.status === column.id)}
               />

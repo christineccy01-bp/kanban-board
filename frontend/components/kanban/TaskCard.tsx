@@ -21,6 +21,7 @@ export const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
 
 const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
   });
@@ -34,6 +35,7 @@ const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
   // The modal is a sibling rather than a child so that React events inside
   // its portal don't bubble up to the card's drag listeners
   return (
+    <>
     <article
       id={id}
       ref={setNodeRef}
@@ -42,6 +44,7 @@ const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
       draggable
       className=" cursor-grab rounded-lg bg-white p-4 shadow-sm active:cursor-grabbing dark:bg-neutral-900 dark:shadow-neutral-800"
       style={style}
+      onClick={() => setIsDetailsOpen(true)}
     >
       <div className="mb-2 flex items-start justify-between gap-2">
         <h3 className="font-semibold leading-snug" title={title}>
@@ -55,8 +58,13 @@ const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
       >
         {truncate(description, DESCRIPTION_MAX_LENGTH)}
       </p>
-
     </article>
+    <TaskCardDetails
+        task={{ id, title, description, status, createdAt }}
+        open={isDetailsOpen}
+        onOpenChange={setIsDetailsOpen}
+      />
+      </>
   );
 };
 
