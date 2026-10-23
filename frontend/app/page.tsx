@@ -1,9 +1,9 @@
 "use client";
 
-import { useId, useState, MouseEvent } from "react";
+import { useId, useState, useEffect, MouseEvent } from "react";
 import DarkModeSwitch from "@/components/kanban/DarkModeSwitch";
 import Column from "@/components/kanban/Column";
-import { ColumnType } from "@/components/types";
+import { ColumnType, TaskStatus } from "@/components/types";
 import { CardProps } from "@/components/kanban/TaskCard";
 import {
   DndContext,
@@ -22,35 +22,32 @@ const COLUMNS: ColumnType[] = [
   { id: 'archive', title: 'Archive' },
 ];
 
-const INITIAL_TASKS: CardProps[] = [
-  {
-    id: '1',
-    title: 'Research Project',
-    description: 'Gather requirements and create initial documentation',
-    status: 'new',
-  },
-  {
-    id: '2',
-    title: 'Design System',
-    description: 'Create component library and design tokens',
-    status: 'new',
-  },
-  {
-    id: '3',
-    title: 'API Integration',
-    description: 'Implement REST API endpoints',
-    status: 'in-progress',
-  },
-  {
-    id: '4',
-    title: 'Testing',
-    description: 'Write unit tests for core functionality',
-    status: 'done',
-  },
-];
+const STATUS_MAP: Record<string, TaskStatus> = {
+  N: 'new',
+  P: 'in-progress',
+  D: 'done',
+  A: 'archive'
+}
 
 export default function Home() {
-  const [tasks, setTasks] = useState<CardProps[]>(INITIAL_TASKS);
+  const [tasks, setTasks] = useState<CardProps[]>([]);
+
+  useEffect(() => {
+    fetch('http://localhost:4242/todo_item')
+      .then((res) => res.json())
+      .then((data) => {
+        const mapped = data.map((item:any) => ({
+          ...item,
+          status: STATUS_MAP[item.status],
+        }));
+        setTasks(mapped);
+        console.log(mapped);
+      })
+      .catch((err) => {
+        console.error('Error fetching todo items:', err);
+      });
+  }, []);
+
   const dndContextId = useId();
   // Require a small movement before dragging so a plain click opens the task details
   const sensors = useSensors(

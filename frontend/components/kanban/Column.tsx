@@ -25,6 +25,7 @@ const Column = ({ column, tasks }: ColumnProps) => {
               title={task.title} 
               description={task.description} 
               status={task.status} 
+              createdAt={task.createdAt}
             />
           );
         })}
