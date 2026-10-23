@@ -18,9 +18,10 @@ const Column = ({ column, tasks }: ColumnProps) => {
       <h2 className="mb-4 font-semibold text-neutral-800 dark:text-neutral-100">{column.title}</h2>
       <div ref={setNodeRef} className="flex flex-1 flex-col gap-4">
         {tasks.map((task) => {
+          console.log(task);
           return (
             <TaskCard 
-              key={task.id} 
+              key={`task-${task.id}`} 
               id={task.id} 
               title={task.title} 
               description={task.description} 
