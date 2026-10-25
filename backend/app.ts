@@ -27,6 +27,7 @@ app.get('/todo_item', async (req: Request, res: Response) => {
   try{
     const todoItem = await sql`SELECT * FROM todo_items`;
     res.json(todoItem);
+    res.status(200).json(todoItem);
   } catch (error){
     console.error('Database query failed:', error);
     res.status(500).json({ error: 'Failed to connect to database.' })
@@ -44,42 +45,22 @@ app.post('/todo_item', async (req: Request, res: Response) => {
     INSERT INTO todo_items (title, description, status)
       VALUES (${title}, ${description}, ${status})
       RETURNING *`;
-    res.status(200).json(created);
+    res.status(201).json(created);
   } catch (error) {
     console.error('Insert failed:', error);
     res.status(500).json({ error: 'Failed to create todo item.' });
   }
 });
 
-//reflection of status in the db upon drag and drop
-app.post('/todo_item/:id/status', async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
-  try {
-    const [updated] = await sql`
-      UPDATE todo_items SET status = ${status}
-      WHERE todo_item_id = ${id}
-      RETURNING *`;
-    if (!updated) {
-      return res.status(404).json({ error: 'Todo item not found.' });
-    }
-    res.json(updated);
-  } catch (error) {
-    console.error('Update failed:', error);
-    res.status(500).json({ error: 'Failed to update todo item.' });
-  }
-});
-
-//edit tasks
-app.post('/todo_item/:id/title/description/status', async (req: Request, res: Response) => {
+//drag and drop and edit tasks endpoint
+app.put('/todo_item/:id', async (req: Request, res: Response) => {
   const { id } = req.params;
   const { title, description, status } = req.body;
 
-  if (!title || title == '' || typeof title !== 'string') {
+  if (typeof title !== 'string') {
     return res.status(400).json({ error: 'Title is required.' });
   }
-  if (!description || description == '' || typeof description !== 'string') {
+  if (typeof description !== 'string') {
     return res.status(400).json({ error: 'Title is required.' });
   }
   if (!['N', 'P', 'D', 'A'].includes(status)) {

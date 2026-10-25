@@ -76,6 +76,8 @@ export default function Home() {
     const taskId = active.id as string;
     const newStatus = over.id as CardProps['status'];
     const previousTasks = tasks;
+    const task = tasks.find((task) => task.id === taskId);
+    if (!task) return;
 
     setTasks(() =>
       tasks.map((task) =>
@@ -90,10 +92,14 @@ export default function Home() {
 
     //update to DB
     try {
-      const res = await fetch(`http://localhost:4242/todo_item/${taskId}/status`, {
-        method: 'POST',
+      const res = await fetch(`http://localhost:4242/todo_item/${taskId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status: STATUS_CODE[newStatus] }),
+        body: JSON.stringify({
+          title: task.title,
+          description: task.description,
+          status: STATUS_CODE[newStatus] 
+        }),
       });
       console.log(res.body)
       if (!res.ok) throw new Error(`Failed to update task (status ${res.status})`);
@@ -130,8 +136,8 @@ export default function Home() {
     );
 
     try {
-      const res = await fetch(`http://localhost:4242/todo_item/${taskId}/title/description/status`, {
-        method: 'POST',
+      const res = await fetch(`http://localhost:4242/todo_item/${taskId}`, {
+        method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...changes, status: STATUS_CODE[changes.status] }),
       });
