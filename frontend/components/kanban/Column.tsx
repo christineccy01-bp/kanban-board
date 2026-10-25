@@ -1,14 +1,15 @@
 import { useDroppable } from "@dnd-kit/core";
-import TaskCard from "./TaskCard";
+import TaskCard, { TaskUpdateProps } from "./TaskCard";
 import { ColumnType } from "../types";
 import { CardProps } from "./TaskCard";
 
 export type ColumnProps = {
   column: ColumnType;
   tasks: CardProps[];
+  onUpdateTask: (taskId: string, changes: TaskUpdateProps) => Promise<void>;
 };
 
-const Column = ({ column, tasks }: ColumnProps) => {
+const Column = ({ column, tasks, onUpdateTask}: ColumnProps) => {
   const { setNodeRef } = useDroppable({
     id: column.id,
   });
@@ -27,6 +28,7 @@ const Column = ({ column, tasks }: ColumnProps) => {
               description={task.description} 
               status={task.status} 
               createdAt={task.createdAt}
+              onUpdate={(changes) => onUpdateTask(task.id, changes)}
             />
           );
         })}
