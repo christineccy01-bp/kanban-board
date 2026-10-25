@@ -14,7 +14,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import Button from "@/components/kanban/Button";
+import Button from "@/components/ui/Button";
 import Popup, {NewTaskInput} from "@/components/kanban/AddTaskModal";
 
 //extracted out from the useEffect to be reused

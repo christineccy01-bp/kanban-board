@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import Button from "./Button";
+import Button from "../ui/Button";
 import ConfirmModal from "./ConfirmModal";
 import EditTaskModal from "./EditTaskModal";
-import Modal from "./Modal";
+import Modal from "../ui/Modal";
 import StatusTag from "./StatusBadge";
 import { CardProps, TaskUpdateProps } from "./TaskCard";
 

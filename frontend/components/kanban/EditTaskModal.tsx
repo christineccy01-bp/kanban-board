@@ -1,9 +1,9 @@
 "use client";
 
 import { SubmitEvent, useState } from "react";
-import Button from "./Button";
-import InputField from "./InputField";
-import Modal from "./Modal";
+import Button from "../ui/Button";
+import InputField from "../ui/InputField";
+import Modal from "../ui/Modal";
 import { CardProps, TaskUpdateProps } from "./TaskCard";
 import { STATUS_OPTIONS } from "../../utils/constants";
 import { TaskStatus } from "@/utils/types";

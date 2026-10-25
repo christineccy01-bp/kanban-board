@@ -1,8 +1,8 @@
 "use client";
 
-import Modal from "./Modal";
-import Button from "./Button";
-import InputField from "./InputField";
+import Modal from "../ui/Modal";
+import Button from "../ui/Button";
+import InputField from "../ui/InputField";
 import { SubmitEvent, useState } from 'react';
 import { STATUS_OPTIONS } from "../../utils/constants";
 
