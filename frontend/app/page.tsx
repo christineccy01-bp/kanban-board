@@ -127,6 +127,15 @@ export default function Home() {
     }
   };
 
+  // The card unmounts once removed from state, which also closes its modals
+  const handleDeleteTask = async (taskId: string) => {
+    const res = await fetch(`http://localhost:4242/todo_item/${taskId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) throw new Error(`Failed to delete task (status ${res.status})`);
+    setTasks((current) => current.filter((task) => task.id !== taskId));
+  };
+
   return (
     <main className="flex flex-1 flex-col gap-6 p-8 font-sans">
       <menu className="flex justify-between w-full">
@@ -153,6 +162,7 @@ export default function Home() {
                 id={status}
                 tasks={tasks.filter((task) => task.status === status)}
                 onUpdateTask={handleUpdateTask}
+                onDeleteTask={handleDeleteTask}
               />
             );
           })}

@@ -85,6 +85,24 @@ app.put('/todo_item/:id', async (req: Request, res: Response) => {
   }
 });
 
+//delete task endpoint
+app.delete('/todo_item/:id', async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const [deleted] = await sql`
+      DELETE FROM todo_items
+      WHERE todo_item_id = ${id}
+      RETURNING *`;
+    if (!deleted) {
+      return res.status(404).json({ error: 'Todo item not found.' });
+    }
+    res.status(204).end();
+  } catch (error) {
+    console.error('Delete failed:', error);
+    res.status(500).json({ error: 'Failed to delete todo item.' });
+  }
+});
+
 //making sure backend is running
 app.listen(PORT, () => {
     console.log(`Listening to http://localhost:${PORT}`);

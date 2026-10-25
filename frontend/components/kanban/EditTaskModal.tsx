@@ -12,7 +12,8 @@ export type EditTaskModalProps = {
   task: CardProps;
   open: boolean;
   onSave: (changes: TaskUpdateProps) => Promise<void>;
-  onCancel: () => void;
+  onBack: () => void;
+  onDelete: () => void;
   onClose: (open: boolean) => void;
 };
 
@@ -20,7 +21,8 @@ const EditTaskModal = ({
   task,
   open,
   onSave,
-  onCancel,
+  onBack,
+  onDelete,
   onClose,
 }: EditTaskModalProps) => {
   const [newTitle, setNewTitle] = useState(task.title);
@@ -46,14 +48,15 @@ const EditTaskModal = ({
     <Modal
       open={open}
       onOpenChange={onClose}
+      onBack={onBack}
       title="Edit Task"
       footer={
         <>
           <Button type="submit" form={formId}>
             Save
           </Button>
-          <Button variant="secondary" onClick={onCancel}>
-            Cancel
+          <Button variant="danger" onClick={onDelete}>
+            Delete
           </Button>
         </>
       }

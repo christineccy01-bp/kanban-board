@@ -8,9 +8,10 @@ export type ColumnProps = {
   id: TaskStatus;
   tasks: CardProps[];
   onUpdateTask: (taskId: string, changes: TaskUpdateProps) => Promise<void>;
+  onDeleteTask: (taskId: string) => Promise<void>;
 };
 
-const Column = ({ id, tasks, onUpdateTask}: ColumnProps) => {
+const Column = ({ id, tasks, onUpdateTask, onDeleteTask }: ColumnProps) => {
   const { setNodeRef } = useDroppable({
     id: id,
   });
@@ -29,6 +30,7 @@ const Column = ({ id, tasks, onUpdateTask}: ColumnProps) => {
               status={task.status} 
               createdAt={task.createdAt}
               onUpdate={(changes) => onUpdateTask(task.id, changes)}
+              onDelete={() => onDeleteTask(task.id)}
             />
           );
         })}
