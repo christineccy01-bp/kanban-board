@@ -14,13 +14,19 @@ export type CardProps = {
   createdAt: number;
 };
 
+export type TaskUpdateProps = Pick<CardProps, "title" | "description" | "status">;
+
+export type TaskCardProps = CardProps & {
+  onUpdate: (changes: TaskUpdateProps) => Promise<void>;
+};
+
 export const TITLE_MAX_LENGTH = 30;
 export const DESCRIPTION_MAX_LENGTH = 130;
 
 export const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
 
-const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
+const TaskCard = ({ id, title, description, status, createdAt, onUpdate }: TaskCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
@@ -62,7 +68,8 @@ const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
     <TaskCardDetails
         task={{ id, title, description, status, createdAt }}
         open={isDetailsOpen}
-        onOpenChange={setIsDetailsOpen}
+        onClose={setIsDetailsOpen}
+        onEdit={onUpdate}
       />
       </>
   );
