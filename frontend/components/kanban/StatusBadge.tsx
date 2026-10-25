@@ -1,4 +1,4 @@
-import { TaskStatus } from "../types";
+import { TaskStatus } from "@/utils/types";
 
 export type StatusTagProps = {
   status: TaskStatus;
@@ -6,21 +6,21 @@ export type StatusTagProps = {
 
 const STATUS_STYLES: Record<TaskStatus, { label: string; className: string }> =
   {
-    new: {
+    N: {
       label: "New",
       className: "bg-sky-100 text-sky-800 dark:bg-sky-900 dark:text-sky-100",
     },
-    "in-progress": {
+    P: {
       label: "In Progress",
       className:
         "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100",
     },
-    done: {
+    D: {
       label: "Done",
       className:
         "bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-100",
     },
-    archive: {
+    A: {
       label: "Archive",
       className:
         "bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-200",

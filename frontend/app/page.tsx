@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useState, useEffect, MouseEvent } from "react";
+import { useId, useState, useEffect } from "react";
 import DarkModeSwitch from "@/components/kanban/DarkModeSwitch";
 import Column from "@/components/kanban/Column";
-import { ColumnType, TaskStatus } from "@/components/types";
+import { STATUS_MAP } from "@/utils/constants";
+import { TaskStatus } from "@/utils/types";
 import { CardProps, TaskUpdateProps } from "@/components/kanban/TaskCard";
 import {
   DndContext,
@@ -14,28 +15,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import Button from "@/components/kanban/Button";
-import Popup, {NewTaskInput} from "@/components/kanban/Popup";
-
-const COLUMNS: ColumnType[] = [
-  { id: 'new', title: 'New' },
-  { id: 'in-progress', title: 'In Progress' },
-  { id: 'done', title: 'Done' },
-  { id: 'archive', title: 'Archive' },
-];
-
-const STATUS_MAP: Record<string, TaskStatus> = {
-  N: 'new',
-  P: 'in-progress',
-  D: 'done',
-  A: 'archive'
-}
-
-const STATUS_CODE: Record<TaskStatus, string> = {
-  'new': 'N',
-  'in-progress': 'P',
-  'done': 'D',
-  'archive': 'A',
-};
+import Popup, {NewTaskInput} from "@/components/kanban/AddTaskModal";
 
 //extracted out from the useEffect to be reused
 const fetchTasks = async (): Promise<CardProps[]> => {
@@ -44,14 +24,13 @@ const fetchTasks = async (): Promise<CardProps[]> => {
   return data.map((item: any) => ({
     ...item,
     id: item.todo_item_id,
-    status: STATUS_MAP[item.status],
+    status: item.status,
   }));
 };
 
 export default function Home() {
   const [tasks, setTasks] = useState<CardProps[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
-
 
   useEffect(() => {
     fetchTasks()
@@ -98,7 +77,7 @@ export default function Home() {
         body: JSON.stringify({
           title: task.title,
           description: task.description,
-          status: STATUS_CODE[newStatus] 
+          status: newStatus
         }),
       });
       console.log(res.body)
@@ -139,7 +118,7 @@ export default function Home() {
       const res = await fetch(`http://localhost:4242/todo_item/${taskId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...changes, status: STATUS_CODE[changes.status] }),
+        body: JSON.stringify({ ...changes, status: changes.status }),
       });
       if (!res.ok) throw new Error(`Failed to update task (status ${res.status})`);
     } catch (err) {
@@ -167,12 +146,12 @@ export default function Home() {
       </div>
       <div className="flex flex-1 gap-8 w-full">
         <DndContext id={dndContextId} sensors={sensors} onDragEnd={handleDragEnd}>
-          {COLUMNS.map((column) => {
+          {(Object.keys(STATUS_MAP) as TaskStatus[]).map((status) => {
             return (
               <Column
-                key={`column-${column.id}`}
-                column={column}
-                tasks={tasks.filter((task) => task.status === column.id)}
+                key={`column-${status}`}
+                id={status}
+                tasks={tasks.filter((task) => task.status === status)}
                 onUpdateTask={handleUpdateTask}
               />
             );

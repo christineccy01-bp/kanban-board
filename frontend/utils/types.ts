@@ -1,0 +1,1 @@
+export type TaskStatus = "N" | "P" | "D" | "A";
