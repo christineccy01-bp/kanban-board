@@ -2,9 +2,12 @@
 
 import Modal from "../ui/Modal";
 import Button from "../ui/Button";
+import Dropdown from "../ui/Dropdown";
+import StatusTag from "./StatusBadge";
 import InputField from "../ui/InputField";
 import { SubmitEvent, useState } from 'react';
 import { STATUS_OPTIONS } from "../../utils/constants";
+import { TaskStatus } from "@/utils/types";
 
 export type NewTaskInput = {
     title: string;
@@ -27,7 +30,7 @@ const Popup = ({
 }: PopupProps) => {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDescription, setTaskDescription] = useState("");
-    const [status, setStatus] = useState("N");
+    const [status, setStatus] = useState<TaskStatus>("N");
 
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -71,14 +74,14 @@ const Popup = ({
                 value={taskTitle}
                 onChange={(e) => setTaskTitle(e.target.value)}
             />
-            <InputField
+            <Dropdown
                 id="task-status"
                 label="Status"
-                type="select"
                 options={STATUS_OPTIONS}
                 required
                 value={status}
-                onChange={(e) => setStatus(e.target.value)}
+                onValueChange={setStatus}
+                renderOption={(option) => <StatusTag status={option.value} />}
             />
             <InputField
                 id="task-description"

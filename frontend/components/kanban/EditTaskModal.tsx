@@ -2,6 +2,8 @@
 
 import { SubmitEvent, useState } from "react";
 import Button from "../ui/Button";
+import Dropdown from "../ui/Dropdown";
+import StatusTag from "./StatusBadge";
 import InputField from "../ui/InputField";
 import Modal from "../ui/Modal";
 import { CardProps, TaskUpdateProps } from "./TaskCard";
@@ -73,13 +75,13 @@ const EditTaskModal = ({
           value={newTitle}
           onChange={(e) => setNewTitle(e.target.value)}
         />
-        <InputField
+        <Dropdown
           id={`${formId}-status`}
           label="Status"
-          type="select"
           options={STATUS_OPTIONS}
           value={newStatus}
-          onChange={(e) => setNewStatus(e.target.value as TaskStatus)}
+          onValueChange={setNewStatus}
+          renderOption={(option) => <StatusTag status={option.value} />}
         />
         <InputField
           id={`${formId}-description`}
