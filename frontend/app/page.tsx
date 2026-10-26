@@ -15,7 +15,22 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import Button from "@/components/ui/Button";
+import SearchInput from "@/components/ui/SearchInput";
 import Popup, {NewTaskInput} from "@/components/kanban/AddTaskModal";
+
+
+// Matches against the full title and description, not the truncated card text
+export const matchesSearch = (
+  task: Pick<CardProps, "title" | "description">,
+  query: string,
+) => {
+  const q = query.trim().toLowerCase();
+  if (!q) return true;
+  return (
+    task.title.toLowerCase().includes(q) ||
+    task.description.toLowerCase().includes(q)
+  );
+};
 
 //extracted out from the useEffect to be reused
 const fetchTasks = async (): Promise<CardProps[]> => {
@@ -31,6 +46,11 @@ const fetchTasks = async (): Promise<CardProps[]> => {
 export default function Home() {
   const [tasks, setTasks] = useState<CardProps[]>([]);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Only the columns are filtered; handlers keep working on the full task list
+  const visibleTasks = tasks.filter((task) => matchesSearch(task, searchQuery));
+  const hasNoMatches = searchQuery.trim() !== "" && visibleTasks.length === 0;
 
   useEffect(() => {
     fetchTasks()
@@ -80,7 +100,6 @@ export default function Home() {
           status: newStatus
         }),
       });
-      console.log(res.body)
       if (!res.ok) throw new Error(`Failed to update task (status ${res.status})`);
     } catch (err) {
       console.error('Error updating task status:', err);
@@ -142,7 +161,12 @@ export default function Home() {
         <h1 className="text-2xl font-bold">My Kanban Board</h1>
         <DarkModeSwitch />
       </menu>
-      <div className="flex justify-end">
+      <div className="flex items-center justify-between gap-4">
+        <SearchInput
+          className="max-w-sm"
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+        />
         <Button onClick={handleAddTask}>
           Add Task
         </Button>
@@ -153,6 +177,11 @@ export default function Home() {
             onCreate={handleCreateTask}
           />
       </div>
+      {hasNoMatches && (
+        <p role="status" className="text-sm text-neutral-600 dark:text-neutral-400">
+          No tasks match &ldquo;{searchQuery.trim()}&rdquo;
+        </p>
+      )}
       <div className="flex flex-1 gap-8 w-full">
         <DndContext id={dndContextId} sensors={sensors} onDragEnd={handleDragEnd}>
           {(Object.keys(STATUS_MAP) as TaskStatus[]).map((status) => {
@@ -160,7 +189,7 @@ export default function Home() {
               <Column
                 key={`column-${status}`}
                 id={status}
-                tasks={tasks.filter((task) => task.status === status)}
+                tasks={visibleTasks.filter((task) => task.status === status)}
                 onUpdateTask={handleUpdateTask}
                 onDeleteTask={handleDeleteTask}
               />
