@@ -1,25 +1,26 @@
 import { useDroppable } from "@dnd-kit/core";
 import TaskCard, { TaskUpdateProps } from "./TaskCard";
-import { ColumnType } from "../types";
+import { TaskStatus } from "@/utils/types";
 import { CardProps } from "./TaskCard";
+import { STATUS_MAP } from "../../utils/constants";
 
 export type ColumnProps = {
-  column: ColumnType;
+  id: TaskStatus;
   tasks: CardProps[];
   onUpdateTask: (taskId: string, changes: TaskUpdateProps) => Promise<void>;
+  onDeleteTask: (taskId: string) => Promise<void>;
 };
 
-const Column = ({ column, tasks, onUpdateTask}: ColumnProps) => {
+const Column = ({ id, tasks, onUpdateTask, onDeleteTask }: ColumnProps) => {
   const { setNodeRef } = useDroppable({
-    id: column.id,
+    id: id,
   });
 
   return (
     <div className="flex min-w-0 flex-1 flex-col rounded-lg bg-slate-200 dark:bg-neutral-950 p-4">
-      <h2 className="mb-4 font-semibold text-neutral-800 dark:text-neutral-100">{column.title}</h2>
+      <h2 className="mb-4 font-semibold text-neutral-800 dark:text-neutral-100">{STATUS_MAP[id]}</h2>
       <div ref={setNodeRef} className="flex flex-1 flex-col gap-4">
         {tasks.map((task) => {
-          console.log(task);
           return (
             <TaskCard 
               key={`task-${task.id}`} 
@@ -29,6 +30,7 @@ const Column = ({ column, tasks, onUpdateTask}: ColumnProps) => {
               status={task.status} 
               createdAt={task.createdAt}
               onUpdate={(changes) => onUpdateTask(task.id, changes)}
+              onDelete={() => onDeleteTask(task.id)}
             />
           );
         })}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useDraggable } from "@dnd-kit/core";
-import { TaskStatus } from "../types";
+import { TaskStatus } from "@/utils/types";
 import StatusTag from "./StatusBadge";
 import TaskCardDetails from "./TaskCardDetails";
 
@@ -18,6 +18,7 @@ export type TaskUpdateProps = Pick<CardProps, "title" | "description" | "status"
 
 export type TaskCardProps = CardProps & {
   onUpdate: (changes: TaskUpdateProps) => Promise<void>;
+  onDelete: () => Promise<void>;
 };
 
 export const TITLE_MAX_LENGTH = 30;
@@ -26,7 +27,7 @@ export const DESCRIPTION_MAX_LENGTH = 130;
 export const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
 
-const TaskCard = ({ id, title, description, status, createdAt, onUpdate }: TaskCardProps) => {
+const TaskCard = ({ id, title, description, status, createdAt, onUpdate, onDelete }: TaskCardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
@@ -48,7 +49,7 @@ const TaskCard = ({ id, title, description, status, createdAt, onUpdate }: TaskC
       {...listeners}
       {...attributes}
       draggable
-      className=" cursor-grab rounded-lg bg-white p-4 shadow-sm active:cursor-grabbing dark:bg-neutral-900 dark:shadow-neutral-800"
+      className="cursor-grab rounded-lg bg-white hover:bg-slate-100 transition-colors p-4 shadow-sm active:cursor-grabbing dark:bg-neutral-900 dark:shadow-neutral-800 dark:hover:bg-neutral-800"
       style={style}
       onClick={() => setIsDetailsOpen(true)}
     >
@@ -59,7 +60,7 @@ const TaskCard = ({ id, title, description, status, createdAt, onUpdate }: TaskC
         <StatusTag status={status} />
       </div>
       <p
-        className="text-sm text-slate-600 dark:text-slate-400"
+        className="text-sm text-slate-600 dark:text-neutral-400"
         title={description}
       >
         {truncate(description, DESCRIPTION_MAX_LENGTH)}
@@ -70,6 +71,7 @@ const TaskCard = ({ id, title, description, status, createdAt, onUpdate }: TaskC
         open={isDetailsOpen}
         onClose={setIsDetailsOpen}
         onEdit={onUpdate}
+        onDelete={onDelete}
       />
       </>
   );
