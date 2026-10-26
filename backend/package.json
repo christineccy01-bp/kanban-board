@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "start": "node --use-system-ca --env-file=.env app.ts",
+    "start": "node --use-system-ca --env-file=.env server.ts",
     "typecheck": "tsc"
   },
   "keywords": [],
