@@ -78,6 +78,12 @@ cd backend && pnpm install && pnpm start
 cd frontend && pnpm install && pnpm dev
 ```
 
+The frontend calls the backend at `http://localhost:4242` by default. To use a different backend, set `NEXT_PUBLIC_API_URL` in `frontend/.env.local`:
+
+```
+NEXT_PUBLIC_API_URL=https://your-backend.example.com
+```
+
 ### 3. Run the tests
 
 ```bash
