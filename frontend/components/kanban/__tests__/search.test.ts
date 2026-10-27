@@ -1,4 +1,4 @@
-import { matchesSearch } from "@/components/kanban/Board";
+import { matchesSearch } from "@/components/kanban/KanbanBoard";
 
 const task = {
   title: "Research Project",

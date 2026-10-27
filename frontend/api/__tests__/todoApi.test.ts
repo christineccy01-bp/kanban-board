@@ -6,7 +6,7 @@ import {
   getTasks,
   TodoItemResponse,
   updateTask,
-} from "@/api/todoApi";
+} from "../todoApi";
 
 const row: TodoItemResponse = {
   todo_item_id: 3,
