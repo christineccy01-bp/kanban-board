@@ -12,7 +12,7 @@ import { TaskStatus } from "@/utils/types";
 export type NewTaskInput = {
     title: string;
     description: string;
-    status: string;
+    status: TaskStatus;
 };
 
 export type PopupProps = {
