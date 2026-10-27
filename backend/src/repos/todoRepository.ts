@@ -1,11 +1,11 @@
 import { sql } from '../../db/client.ts';
 import type { TodoInput, TodoItem } from '../models/todoModel.ts';
 
-export const getTasks = async () => {
+export const list = async () => {
     return (await sql`SELECT * FROM todo_items`) as TodoItem[];
 }
 
-export const createTask = async (data: TodoInput) => {
+export const create = async (data: TodoInput) => {
     const [created] = await sql`
     INSERT INTO todo_items (title, description, status)
         VALUES (${data.title}, ${data.description}, ${data.status})
@@ -13,7 +13,7 @@ export const createTask = async (data: TodoInput) => {
     return created as TodoItem;
 }
 
-export const updateTask = async (id: string, data: TodoInput) => {
+export const update = async (id: number, data: TodoInput) => {
     const [updated] = await sql`
         UPDATE todo_items SET 
             title = ${data.title}, 
@@ -24,7 +24,7 @@ export const updateTask = async (id: string, data: TodoInput) => {
     return updated as TodoItem;
 }
 
-export const removeTask = async (id: string) => {
+export const remove = async (id: number) => {
     const [deleted] = await sql`
         DELETE FROM todo_items
         WHERE todo_item_id = ${id}

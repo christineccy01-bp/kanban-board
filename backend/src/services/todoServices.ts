@@ -1,17 +1,26 @@
-import { STATUSES } from '../models/todoModel.ts';
+import { STATUSES, type TodoInput } from '../models/todoModel.ts';
 import * as todoRepository from '../repos/todoRepository.ts';
 
 export class ValidationError extends Error {}
 
-export const validateTodoInput = (data: any) => {
+export const validateTodoInput = (data: TodoInput) => {
+    if (typeof data.title === 'undefined') {
+        throw new ValidationError('Title is required.');
+    }
     if (typeof data.title !== 'string') {
-        throw new Error('Title is required.');
+        throw new ValidationError('Title must be a string.');
+    }
+    if (typeof data.description === 'undefined') {
+        throw new ValidationError('Description is required.');
     }
     if (typeof data.description !== 'string') {
-        throw new Error('Description is required.');
+        throw new ValidationError('Description must be a string.');
+    }
+    if (typeof data.status === 'undefined') {
+        throw new ValidationError('Status is required.');
     }
     if (!STATUSES.includes(data.status)) {
-        throw new Error('Invalid status.');
+        throw new ValidationError('Invalid status.');
     }
 
     return {
@@ -22,17 +31,17 @@ export const validateTodoInput = (data: any) => {
 }
 
 export const getAllTasks = async () => {
-    return todoRepository.getTasks();
+    return todoRepository.list();
 }
 
-export const createTask = async (data: any) => {
-    return todoRepository.createTask(validateTodoInput(data));
+export const makeTask = async (data: TodoInput) => {
+    return todoRepository.create(validateTodoInput(data));
 }
 
-export const updateTask = async (id: string, data: any) => {
-    return todoRepository.updateTask(id, validateTodoInput(data));
+export const updateTask = async (id: number, data: TodoInput) => {
+    return todoRepository.update(id, validateTodoInput(data));
 }
 
-export const removeTask = async (id: string) => {
-    return todoRepository.removeTask(id);
+export const removeTask = async (id: number) => {
+    return todoRepository.remove(id);
 }
