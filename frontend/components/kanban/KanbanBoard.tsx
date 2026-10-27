@@ -32,7 +32,7 @@ export const matchesSearch = (
   );
 };
 
-const Board = () => {
+const KanbanBoard = () => {
   const { tasks, createTask, moveTask } = useTasks();
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -100,4 +100,4 @@ const Board = () => {
   );
 };
 
-export default Board;
+export default KanbanBoard;
