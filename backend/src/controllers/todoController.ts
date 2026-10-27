@@ -19,13 +19,13 @@ export async function getTasks(req: Request, res: Response) {
 
 export async function createTask(req: Request, res: Response) {
   try {
-    res.status(201).json(await todoService.createTask(req.body));
+    res.status(201).json(await todoService.makeTask(req.body));
   } catch (error) {
     handleError(res, error, 'Failed to create todo item.');
   }
 }
 
-export async function updateTask(req: Request<{ id: string }>, res: Response) {
+export async function editTask(req: Request<{ id: number }>, res: Response) {
   try {
     const updated = await todoService.updateTask(req.params.id, req.body);
     if (!updated) return res.status(404).json({ error: 'Todo item not found.' });
@@ -35,7 +35,7 @@ export async function updateTask(req: Request<{ id: string }>, res: Response) {
   }
 }
 
-export async function removeTask(req: Request<{ id: string }>, res: Response) {
+export async function deleteTask(req: Request<{ id: number }>, res: Response) {
   try {
     const deleted = await todoService.removeTask(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Todo item not found.' });
