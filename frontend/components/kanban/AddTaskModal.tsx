@@ -15,19 +15,19 @@ export type NewTaskInput = {
     status: TaskStatus;
 };
 
-export type PopupProps = {
+export type AddTaskModalProps = {
     isOpen: boolean;
     onClose: () => void;
     popUpTitle: string;
     onCreate: (task: NewTaskInput) => Promise<void>;
 }
 
-const Popup = ({
+const AddTaskModal = ({
     isOpen,
     onClose,
     popUpTitle,
     onCreate
-}: PopupProps) => {
+}: AddTaskModalProps) => {
     const [taskTitle, setTaskTitle] = useState("");
     const [taskDescription, setTaskDescription] = useState("");
     const [status, setStatus] = useState<TaskStatus>("N");
@@ -35,7 +35,11 @@ const Popup = ({
     const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            await onCreate({ title: taskTitle, description: taskDescription, status });
+            await onCreate({
+                title: taskTitle.trim(),
+                description: taskDescription.trim(),
+                status,
+            });
             setTaskTitle("");
             setTaskDescription("");
             setStatus("N");
@@ -99,4 +103,4 @@ const Popup = ({
 
 
 
-export default Popup;
+export default AddTaskModal;
