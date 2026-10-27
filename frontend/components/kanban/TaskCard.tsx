@@ -14,12 +14,10 @@ export type CardProps = {
   createdAt: number;
 };
 
-export type TaskUpdateProps = Pick<CardProps, "title" | "description" | "status">;
-
-export type TaskCardProps = CardProps & {
-  onUpdate: (changes: TaskUpdateProps) => Promise<void>;
-  onDelete: () => Promise<void>;
-};
+export type TaskUpdateProps = Pick<
+  CardProps,
+  "title" | "description" | "status"
+>;
 
 export const TITLE_MAX_LENGTH = 30;
 export const DESCRIPTION_MAX_LENGTH = 130;
@@ -27,7 +25,7 @@ export const DESCRIPTION_MAX_LENGTH = 130;
 export const truncate = (text: string, maxLength: number) =>
   text.length > maxLength ? `${text.slice(0, maxLength).trimEnd()}…` : text;
 
-const TaskCard = ({ id, title, description, status, createdAt, onUpdate, onDelete }: TaskCardProps) => {
+const TaskCard = ({ id, title, description, status, createdAt }: CardProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: id,
@@ -43,37 +41,35 @@ const TaskCard = ({ id, title, description, status, createdAt, onUpdate, onDelet
   // its portal don't bubble up to the card's drag listeners
   return (
     <>
-    <article
-      id={id}
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      draggable
-      className="cursor-grab rounded-lg bg-white hover:bg-slate-100 transition-colors p-4 shadow-sm active:cursor-grabbing dark:bg-neutral-900 dark:shadow-neutral-800 dark:hover:bg-neutral-800"
-      style={style}
-      onClick={() => setIsDetailsOpen(true)}
-    >
-      <div className="mb-2 flex items-start justify-between gap-2">
-        <h3 className="font-semibold leading-snug" title={title}>
-          {truncate(title, TITLE_MAX_LENGTH)}
-        </h3>
-        <StatusTag status={status} />
-      </div>
-      <p
-        className="text-sm text-slate-600 dark:text-neutral-400"
-        title={description}
+      <article
+        id={id}
+        ref={setNodeRef}
+        {...listeners}
+        {...attributes}
+        draggable
+        className="cursor-grab rounded-lg bg-white hover:bg-slate-100 transition-colors p-4 shadow-sm active:cursor-grabbing dark:bg-neutral-900 dark:shadow-neutral-800 dark:hover:bg-neutral-800"
+        style={style}
+        onClick={() => setIsDetailsOpen(true)}
       >
-        {truncate(description, DESCRIPTION_MAX_LENGTH)}
-      </p>
-    </article>
-    <TaskCardDetails
+        <div className="mb-2 flex items-start justify-between gap-2">
+          <h3 className="font-semibold leading-snug" title={title}>
+            {truncate(title, TITLE_MAX_LENGTH)}
+          </h3>
+          <StatusTag status={status} />
+        </div>
+        <p
+          className="text-sm text-slate-600 dark:text-neutral-400"
+          title={description}
+        >
+          {truncate(description, DESCRIPTION_MAX_LENGTH)}
+        </p>
+      </article>
+      <TaskCardDetails
         task={{ id, title, description, status, createdAt }}
         open={isDetailsOpen}
         onClose={setIsDetailsOpen}
-        onEdit={onUpdate}
-        onDelete={onDelete}
       />
-      </>
+    </>
   );
 };
 
