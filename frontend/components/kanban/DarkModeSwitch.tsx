@@ -8,7 +8,7 @@ const noopSubscribe = () => () => {};
 
 const DarkModeSwitch = () => {
   const { resolvedTheme, setTheme } = useTheme();
-  
+
   // The theme is unknown during SSR, so only reflect it once hydrated
   const isHydrated = useSyncExternalStore(
     noopSubscribe,
