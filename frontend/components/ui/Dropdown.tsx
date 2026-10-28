@@ -56,7 +56,10 @@ const Dropdown = <T extends string>({
         >
           <Select.Value>{selected && renderOption(selected)}</Select.Value>
           <Select.Icon>
-            <ChevronDown aria-hidden="true" className="size-4 text-neutral-500" />
+            <ChevronDown
+              aria-hidden="true"
+              className="size-4 text-neutral-500"
+            />
           </Select.Icon>
         </Select.Trigger>
 

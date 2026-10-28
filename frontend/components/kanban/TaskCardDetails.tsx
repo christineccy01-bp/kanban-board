@@ -47,6 +47,7 @@ const TaskCardDetails = ({ task, open, onClose }: TaskCardDetailsProps) => {
         }}
         title="Delete Task"
         confirmLabel="Delete"
+        confirmVariant="danger"
         onConfirm={() => deleteTask(task.id)}
       >
         Are you sure you want to delete <strong>{task.title}</strong>? This

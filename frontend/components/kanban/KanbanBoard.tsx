@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/core";
 import DarkModeSwitch from "./DarkModeSwitch";
 import Column from "./Column";
-import Popup from "./AddTaskModal";
+import AddTaskModal from "./AddTaskModal";
 import { CardProps } from "./TaskCard";
 import Button from "../ui/Button";
 import SearchInput from "../ui/SearchInput";
@@ -34,7 +34,7 @@ export const matchesSearch = (
 
 const KanbanBoard = () => {
   const { tasks, createTask, moveTask } = useTasks();
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isAddTaskModalOpen, setAddTaskModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Only the columns are filtered; actions keep working on the full task list
@@ -65,10 +65,10 @@ const KanbanBoard = () => {
           value={searchQuery}
           onValueChange={setSearchQuery}
         />
-        <Button onClick={() => setIsPopupOpen(true)}>Add Task</Button>
-        <Popup
-          isOpen={isPopupOpen}
-          onClose={() => setIsPopupOpen(false)}
+        <Button onClick={() => setAddTaskModalOpen(true)}>Add Task</Button>
+        <AddTaskModal
+          isOpen={isAddTaskModalOpen}
+          onClose={() => setAddTaskModalOpen(false)}
           popUpTitle="Create Task"
           onCreate={createTask}
         />

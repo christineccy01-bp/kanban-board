@@ -35,8 +35,8 @@ const EditTaskModal = ({
     e.preventDefault();
     try {
       await onSave({
-        title: newTitle,
-        description: newDescription,
+        title: newTitle.trim(),
+        description: newDescription.trim(),
         status: newStatus,
       });
     } catch (error) {
@@ -79,6 +79,7 @@ const EditTaskModal = ({
           id={`${formId}-status`}
           label="Status"
           options={STATUS_OPTIONS}
+          required
           value={newStatus}
           onValueChange={setNewStatus}
           renderOption={(option) => <StatusTag status={option.value} />}
@@ -88,6 +89,7 @@ const EditTaskModal = ({
           label="Description"
           type="textarea"
           rows={4}
+          required
           value={newDescription}
           onChange={(e) => setNewDescription(e.target.value)}
         />

@@ -31,17 +31,21 @@ A full-stack Kanban board for managing tasks across four stages: **New**, **In P
 kanban-board/
 ├── frontend/          Next.js app (http://localhost:3000)
 │   ├── app/           Page, layout and global styles
+│   ├── api/           API client for the backend
 │   ├── components/
 │   │   ├── kanban/    Board-specific components (cards, columns, task modals)
 │   │   └── ui/        Reusable components (Button, Modal, InputField, Dropdown, SearchInput)
-│   ├── utils/         Shared types, constants and helpers
-│   └── __tests__/     Jest tests
+│   ├── context/       TasksContext: task state shared across the board
+│   └── utils/         Shared types, constants and helpers
 ├── backend/           Express API (http://localhost:4242)
 │   ├── server.ts      App entry point
 │   ├── src/           routes, controllers, services, repos, models
+│   ├── tests/         Jest tests for controllers, services and repos
 │   └── db/            Database client and SQL migrations
 └── start.sh           Installs dependencies and starts both apps
 ```
+
+Frontend tests live next to the code they cover, in `__tests__` folders.
 
 ## Getting started
 
@@ -87,8 +91,11 @@ NEXT_PUBLIC_API_URL=https://your-backend.example.com
 ### 3. Run the tests
 
 ```bash
-cd frontend && pnpm test
+cd frontend && pnpm test   # components, context and API client
+cd backend && pnpm test    # controllers, services and repositories
 ```
+
+Frontend component tests use React Testing Library and look elements up by their accessible role and label, for example `getByRole("dialog", { name: "Create Task" })`.
 
 ## API
 
