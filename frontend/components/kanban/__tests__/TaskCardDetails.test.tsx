@@ -105,6 +105,9 @@ describe("TaskCardDetails", () => {
       screen.getByRole("dialog", { name: "Delete Task" }),
     ).toHaveTextContent("Are you sure you want to delete Research Project?");
     expect(deleteTask).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Delete" })).toHaveClass(
+      "text-red-600",
+    );
 
     await act(async () =>
       fireEvent.click(screen.getByRole("button", { name: "Delete" })),

@@ -46,6 +46,28 @@ describe("ConfirmModal", () => {
     expect(screen.getByRole("button", { name: "Delete" })).toBeInTheDocument();
   });
 
+  it("uses the primary button style for confirm by default", () => {
+    renderConfirm();
+
+    expect(screen.getByRole("button", { name: "Confirm" })).toHaveClass(
+      "bg-slate-900",
+    );
+  });
+
+  it.each([
+    ["secondary", "border-slate-300"],
+    ["danger", "text-red-600"],
+  ] as const)(
+    "uses the %s button style when requested",
+    (variant, className) => {
+      renderConfirm({ confirmVariant: variant });
+
+      expect(screen.getByRole("button", { name: "Confirm" })).toHaveClass(
+        className,
+      );
+    },
+  );
+
   it("calls onOpenChange(false) when Cancel is clicked", () => {
     const onOpenChange = jest.fn();
     renderConfirm({ onOpenChange });

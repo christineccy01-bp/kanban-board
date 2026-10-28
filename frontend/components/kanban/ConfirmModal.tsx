@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import Button from "../ui/Button";
+import Button, { ButtonVariant } from "../ui/Button";
 import Modal from "../ui/Modal";
 
 export type ConfirmModalProps = {
@@ -10,6 +10,7 @@ export type ConfirmModalProps = {
   title: string;
   children: ReactNode;
   confirmLabel?: string;
+  confirmVariant?: ButtonVariant;
   onConfirm: () => Promise<void>;
 };
 
@@ -19,6 +20,7 @@ const ConfirmModal = ({
   title,
   children,
   confirmLabel = "Confirm",
+  confirmVariant = "primary",
   onConfirm,
 }: ConfirmModalProps) => {
   const [isConfirming, setIsConfirming] = useState(false);
@@ -45,7 +47,7 @@ const ConfirmModal = ({
             Cancel
           </Button>
           <Button
-            variant="danger"
+            variant={confirmVariant}
             onClick={handleConfirm}
             disabled={isConfirming}
           >
