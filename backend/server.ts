@@ -26,3 +26,7 @@ app.get('/', async (req: Request, res: Response) => {
 const server = app.listen(PORT, () => {
     console.log(`Listening to http://localhost:${PORT}`);
 });
+
+process.on("SIGTERM", () => {
+  server.close(() => process.exit(0)); // stop taking new requests, finish current ones, then exit
+});
