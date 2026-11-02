@@ -2,6 +2,7 @@ import express, { type Express, type Request, type Response } from 'express';
 import { sql } from './db/client.ts';
 import cors from 'cors';
 import todoRouter from './src/routes/todoRoutes.ts';
+import swaggerDocs from './src/documentation/openApi.ts';
 
 const app: Express = express();
 app.use(cors({ origin: 'http://localhost:3000' }))
@@ -22,6 +23,8 @@ app.get('/', async (req: Request, res: Response) => {
   }
 });
 
+swaggerDocs(app, Number(PORT));
+
 //making sure backend is running
 const server = app.listen(PORT, () => {
     console.log(`Listening to http://localhost:${PORT}`);
@@ -30,3 +33,4 @@ const server = app.listen(PORT, () => {
 process.on("SIGTERM", () => {
   server.close(() => process.exit(0)); // stop taking new requests, finish current ones, then exit
 });
+
