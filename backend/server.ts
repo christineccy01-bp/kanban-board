@@ -5,7 +5,7 @@ import todoRouter from './src/routes/todoRoutes.ts';
 import swaggerDocs from './src/documentation/openApi.ts';
 
 const app: Express = express();
-app.use(cors({ origin: 'http://localhost:3000' }))
+app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }))
 app.use(express.json());
 app.use('/todo_item', todoRouter);
 

@@ -1,5 +1,7 @@
 services:
   backend:
+    environment:
+      - CORS_ORIGIN=${CORS_ORIGIN:-http://localhost:3000}
     build: ./backend
     ports:
       - "4242:4242"
@@ -9,8 +11,7 @@ services:
     build:
       context: ./frontend
       args:
-        # Baked into the client bundle at build time; the browser calls the backend directly
-        NEXT_PUBLIC_API_URL: http://localhost:4242
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:4242}
     ports:
       - "3000:3000"
     depends_on:
