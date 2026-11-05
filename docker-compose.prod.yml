@@ -1,0 +1,20 @@
+# Production: runs prebuilt images from Docker Hub (no build on the server).
+# IMAGE_SUFFIX is empty by default, so plain :backend / :frontend tags are used.
+# CI sets IMAGE_SUFFIX=-<commit sha> to deploy the exact images it just built.
+services:
+  backend:
+    image: ${DOCKERHUB_USERNAME}/mykanban-cicd:backend${IMAGE_SUFFIX:-}
+    environment:
+      - CORS_ORIGIN=${CORS_ORIGIN}
+    ports:
+      - "4242:4242"
+    env_file: ./.env
+    restart: unless-stopped
+
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/mykanban-cicd:frontend${IMAGE_SUFFIX:-}
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
