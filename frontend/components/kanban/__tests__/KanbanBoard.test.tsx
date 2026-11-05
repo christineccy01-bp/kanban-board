@@ -49,7 +49,7 @@ describe("KanbanBoard", () => {
     render(<KanbanBoard />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "My Kanban Board" }),
+      screen.getByRole("heading", { level: 1, name: "My Kanban Board 123" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("searchbox")).toBeInTheDocument();
     expect(
