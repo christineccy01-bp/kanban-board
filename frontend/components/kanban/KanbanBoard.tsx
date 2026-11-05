@@ -56,7 +56,7 @@ const KanbanBoard = () => {
   return (
     <main className="flex flex-1 flex-col gap-6 p-8 font-sans">
       <menu className="flex justify-between w-full">
-        <h1 className="text-2xl font-bold">My Kanban Board 123</h1>
+        <h1 className="text-2xl font-bold">My Kanban Board</h1>
         <DarkModeSwitch />
       </menu>
       <div className="flex items-center justify-between gap-4">
