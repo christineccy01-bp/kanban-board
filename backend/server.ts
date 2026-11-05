@@ -5,7 +5,10 @@ import todoRouter from './src/routes/todoRoutes.ts';
 import swaggerDocs from './src/documentation/openApi.ts';
 
 const app: Express = express();
-app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }))
+const allowedOrigins = (process.env.CORS_ORIGIN || 'http://localhost:3000')
+  .split(',') //so that when declare both mykanban.my and kanban.my domains they are correctly handled
+  .map((o) => o.trim());
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 import { requireAuth } from './src/middleware/requireAuth.ts';
 app.use('/todo_item', requireAuth, todoRouter);
