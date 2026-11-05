@@ -7,7 +7,8 @@ import swaggerDocs from './src/documentation/openApi.ts';
 const app: Express = express();
 app.use(cors({ origin: process.env.CORS_ORIGIN || 'http://localhost:3000' }))
 app.use(express.json());
-app.use('/todo_item', todoRouter);
+import { requireAuth } from './src/middleware/requireAuth.ts';
+app.use('/todo_item', requireAuth, todoRouter);
 
 const PORT = process.env.PORT || 4242;
 
