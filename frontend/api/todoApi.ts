@@ -1,5 +1,6 @@
 import { CardProps, TaskUpdateProps } from "@/components/kanban/TaskCard";
 import { TaskStatus } from "@/utils/types";
+import { User } from "oidc-client-ts";
 
 // Only NEXT_PUBLIC_ variables are exposed to the browser
 export const API_URL =
@@ -32,12 +33,24 @@ const toTask = (row: TodoItemResponse): CardProps => ({
   createdAt: Date.parse(row.created_at),
 });
 
+// Not a React component, so useAuth() isn't available here. Read the signed-in
+// user from the sessionStorage key oidc-client-ts writes it to instead.
+export const getAccessToken = (): string | null => {
+  if (typeof window === "undefined") return null;
+  const key = `oidc.user:${process.env.NEXT_PUBLIC_COGNITO_AUTHORITY}:${process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID}`;
+  const raw = window.sessionStorage.getItem(key);
+  return raw ? User.fromStorageString(raw).access_token : null;
+};
+
 const request = async <T>(path: string, init: RequestInit = {}): Promise<T> => {
+  const token = getAccessToken();
   const res = await fetch(`${API_URL}${path}`, {
     ...init,
-    headers: init.body
-      ? { "Content-Type": "application/json", ...init.headers }
-      : init.headers,
+    headers: {
+      ...(init.body ? { "Content-Type": "application/json" } : {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...init.headers,
+    },
   });
 
   if (!res.ok) {

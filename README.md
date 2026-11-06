@@ -12,6 +12,7 @@ A full-stack Kanban board for managing tasks across four stages: **New**, **In P
 - **Delete tasks**: delete an existing task.
 - **Search tasks**: search cards across all columns by title or description as you type.
 - **Dark mode**: switch between light and dark themes.
+- **Sign in**: the board is only shown after signing in with AWS Cognito, and the API rejects requests without a valid token.
 
 ## Technologies
 
@@ -25,6 +26,7 @@ A full-stack Kanban board for managing tasks across four stages: **New**, **In P
 | Testing | Jest, React Testing Library |
 | API docs | OpenAPI, Swagger UI |
 | Tooling | pnpm, ESLint, Prettier |
+| Authentication | AWS Cognito (Hosted UI, OIDC code flow), react-oidc-context, aws-jwt-verify |
 | Deployment | Docker, Docker Hub, GitHub Actions, AWS EC2 |
 
 ## Project structure
@@ -35,6 +37,7 @@ kanban-board/
 │   ├── app/           Page, layout and global styles
 │   ├── api/           API client for the backend
 │   ├── components/
+│   │   ├── auth/      Cognito sign-in: AuthProvider, AuthGate, SignOutButton
 │   │   ├── kanban/    Board-specific components (cards, columns, task modals)
 │   │   └── ui/        Reusable components (Button, Modal, InputField, Dropdown, SearchInput)
 │   ├── context/       TasksContext: task state shared across the board
@@ -59,6 +62,7 @@ Frontend tests live next to the code they cover, in `__tests__` folders.
 - Node.js 24 or later
 - pnpm
 - A Neon (or any PostgreSQL) database
+- An AWS Cognito user pool (see below)
 
 ### 1. Configure the database
 
@@ -70,7 +74,34 @@ DATABASE_URL=postgresql://<user>:<password>@<host>/<database>?sslmode=require
 
 Then create the table by running `backend/db/migrations/001_create_todo_items.sql` against your database. You can paste it into the Neon SQL editor.
 
-### 2. Run the app
+### 2. Configure authentication
+
+The board uses an AWS Cognito user pool. In the Cognito console, the app client needs:
+
+- **No client secret** (the browser is a public client)
+- Allowed callback URL and sign-out URL: `http://localhost:3000` (no trailing slash; it must match `NEXT_PUBLIC_APP_URL` exactly)
+- OAuth grant type **Authorization code**, scopes `openid` and `email`
+- A domain (User pool → Branding → Domain)
+
+Add the user pool to `backend/.env` so the API can verify tokens:
+
+```
+COGNITO_USER_POOL_ID=<region>_<id>
+COGNITO_CLIENT_ID=<app client id>
+```
+
+Create `frontend/.env.local`:
+
+```
+NEXT_PUBLIC_COGNITO_AUTHORITY=https://cognito-idp.<region>.amazonaws.com/<user pool id>
+NEXT_PUBLIC_COGNITO_CLIENT_ID=<app client id>
+NEXT_PUBLIC_COGNITO_DOMAIN=https://<prefix>.auth.<region>.amazoncognito.com
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+Sign-in only works on `http://localhost` or `https://`: Cognito rejects other `http` callback URLs, and the browser only offers the crypto API the login flow needs on secure pages.
+
+### 3. Run the app
 
 From the project root:
 
@@ -99,9 +130,9 @@ NEXT_PUBLIC_API_URL=https://your-backend.example.com
 docker compose up --build
 ```
 
-This builds both images and starts the backend on port 4242 and the frontend on port 3000. It reads `DATABASE_URL` from `backend/.env`.
+This builds both images and starts the backend on port 4242 and the frontend on port 3000. The backend reads `backend/.env`. The frontend's `NEXT_PUBLIC_COGNITO_*` values are build arguments, so Compose takes them from a `.env` file in the project root, not from `frontend/.env.local`.
 
-### 3. Run the tests
+### 4. Run the tests
 
 ```bash
 cd frontend && pnpm test   # components, context and API client
@@ -121,6 +152,8 @@ Frontend component tests use React Testing Library and look elements up by their
 | `GET` | `/` | Health check (returns the database version) |
 
 Status codes: `N` = New, `P` = In Progress, `D` = Done, `A` = Archive.
+
+All `/todo_item` routes require a Cognito access token in an `Authorization: Bearer <token>` header and return `401` without one. The frontend attaches it automatically after sign-in.
 
 Interactive API docs (Swagger UI) are served at http://localhost:4242/api, and the raw OpenAPI spec at `/docs.json`.
 
@@ -149,7 +182,15 @@ You can also run the workflow by hand from the **Actions** tab (**Run workflow**
 | `EC2_SSH_KEY` | Private key used to SSH into the instance |
 | `EC2_APP_DIR` | Directory on EC2 that holds the compose file and `.env` files |
 
-On the **Variables** tab, add `NEXT_PUBLIC_API_URL=http://<elastic-ip>:4242`. It is baked into the frontend at build time, so changing it requires a redeploy.
+On the **Variables** tab, add these. They are baked into the frontend at build time, so changing one requires a redeploy:
+
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | `http://<elastic-ip>:4242` |
+| `NEXT_PUBLIC_COGNITO_AUTHORITY` | `https://cognito-idp.<region>.amazonaws.com/<user pool id>` |
+| `NEXT_PUBLIC_COGNITO_CLIENT_ID` | app client id |
+| `NEXT_PUBLIC_COGNITO_DOMAIN` | `https://<prefix>.auth.<region>.amazoncognito.com` |
+| `NEXT_PUBLIC_APP_URL` | the site's public URL (must be `https://` for sign-in to work, and added to the app client's callback and sign-out URLs) |
 
 **2. EC2:** log in as the `EC2_USER` user and set up `EC2_APP_DIR`:
 
@@ -158,9 +199,11 @@ On the **Variables** tab, add `NEXT_PUBLIC_API_URL=http://<elastic-ip>:4242`. It
 # The login is saved in ~/.docker/config.json, so deploys reuse it.
 docker login -u <dockerhub-username>
 
-mkdir -p <EC2_APP_DIR>/backend && cd <EC2_APP_DIR>
-echo "DATABASE_URL=postgresql://..." > backend/.env
+mkdir -p <EC2_APP_DIR> && cd <EC2_APP_DIR>
 cat > .env <<EOF
+DATABASE_URL=postgresql://...
+COGNITO_USER_POOL_ID=<region>_<id>
+COGNITO_CLIENT_ID=<app client id>
 CORS_ORIGIN=http://<elastic-ip>:3000
 DOCKERHUB_USERNAME=<dockerhub-username>
 EOF

@@ -3,6 +3,7 @@ import {
   ApiError,
   createTask,
   deleteTask,
+  getAccessToken,
   getTasks,
   TodoItemResponse,
   updateTask,
@@ -29,6 +30,23 @@ const mockFetch = (status: number, body?: unknown) => {
   return fetchMock;
 };
 
+const AUTHORITY = "https://cognito-idp.ap-southeast-2.amazonaws.com/pool";
+const CLIENT_ID = "client123";
+const STORAGE_KEY = `oidc.user:${AUTHORITY}:${CLIENT_ID}`;
+
+// Stores a user the same way oidc-client-ts does after sign-in
+const signIn = (accessToken: string) =>
+  sessionStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify({ access_token: accessToken, token_type: "Bearer", profile: {} }),
+  );
+
+beforeEach(() => {
+  process.env.NEXT_PUBLIC_COGNITO_AUTHORITY = AUTHORITY;
+  process.env.NEXT_PUBLIC_COGNITO_CLIENT_ID = CLIENT_ID;
+  sessionStorage.clear();
+});
+
 describe("todoApi", () => {
   describe("getTasks", () => {
     it("fetches all tasks and maps them to the frontend shape", async () => {
@@ -37,7 +55,7 @@ describe("todoApi", () => {
       const tasks = await getTasks();
 
       expect(fetchMock).toHaveBeenCalledWith(`${API_URL}/todo_item`, {
-        headers: undefined,
+        headers: {},
       });
       expect(tasks).toEqual([
         {
@@ -99,7 +117,7 @@ describe("todoApi", () => {
 
       expect(fetchMock).toHaveBeenCalledWith(`${API_URL}/todo_item/3`, {
         method: "DELETE",
-        headers: undefined,
+        headers: {},
       });
     });
   });
@@ -133,6 +151,56 @@ describe("todoApi", () => {
       await expect(deleteTask("99")).rejects.toMatchObject({
         message: "Todo item not found.",
         status: 404,
+      });
+    });
+  });
+
+  describe("authentication", () => {
+    it("returns null when nobody is signed in", () => {
+      expect(getAccessToken()).toBeNull();
+    });
+
+    it("reads the access token of the signed-in user", () => {
+      signIn("abc.def.ghi");
+
+      expect(getAccessToken()).toBe("abc.def.ghi");
+    });
+
+    it("sends the access token as a Bearer header", async () => {
+      signIn("abc.def.ghi");
+      const fetchMock = mockFetch(200, []);
+
+      await getTasks();
+
+      expect(fetchMock).toHaveBeenCalledWith(`${API_URL}/todo_item`, {
+        headers: { Authorization: "Bearer abc.def.ghi" },
+      });
+    });
+
+    it("sends both the token and the JSON content type with a body", async () => {
+      signIn("abc.def.ghi");
+      const fetchMock = mockFetch(201, row);
+
+      await createTask({ title: "t", description: "d", status: "N" });
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${API_URL}/todo_item`,
+        expect.objectContaining({
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer abc.def.ghi",
+          },
+        }),
+      );
+    });
+
+    it("surfaces a rejected token as a 401 ApiError", async () => {
+      signIn("expired");
+      mockFetch(401, { error: "Invalid or expired token" });
+
+      await expect(getTasks()).rejects.toMatchObject({
+        message: "Invalid or expired token",
+        status: 401,
       });
     });
   });

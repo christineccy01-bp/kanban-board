@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Theme } from "@radix-ui/themes";
+import AuthProvider from "@/components/auth/AuthProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -29,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full min-w-full flex">
         <ThemeProvider attribute="class">
           <Theme hasBackground={false} className="flex flex-1">
-            {children}
+            <AuthProvider>{children}</AuthProvider>
           </Theme>
         </ThemeProvider>
       </body>
