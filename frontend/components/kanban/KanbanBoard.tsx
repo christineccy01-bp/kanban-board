@@ -10,6 +10,7 @@ import {
   useSensors,
 } from "@dnd-kit/core";
 import DarkModeSwitch from "./DarkModeSwitch";
+import SignOutButton from "../auth/SignOutButton";
 import Column from "./Column";
 import AddTaskModal from "./AddTaskModal";
 import { CardProps } from "./TaskCard";
@@ -57,7 +58,10 @@ const KanbanBoard = () => {
     <main className="flex flex-1 flex-col gap-6 p-8 font-sans">
       <menu className="flex justify-between w-full">
         <h1 className="text-2xl font-bold">My Kanban Board</h1>
-        <DarkModeSwitch />
+        <div className="flex items-center gap-4">
+          <SignOutButton />
+          <DarkModeSwitch />
+        </div>
       </menu>
       <div className="flex items-center justify-between gap-4">
         <SearchInput

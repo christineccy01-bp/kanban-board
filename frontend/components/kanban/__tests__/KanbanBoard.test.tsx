@@ -4,6 +4,9 @@ import { CardProps } from "@/components/kanban/TaskCard";
 import { useTasks } from "@/context/TasksContext";
 
 jest.mock("@/context/TasksContext");
+jest.mock("react-oidc-context", () => ({
+  useAuth: () => ({ user: { profile: { email: "me@example.com" } } }),
+}));
 jest.mock("next-themes", () => ({
   useTheme: () => ({ resolvedTheme: "light", setTheme: jest.fn() }),
 }));

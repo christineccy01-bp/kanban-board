@@ -56,6 +56,10 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/mykanban-cicd:${{ matrix.app }}-${{ github.sha }}
           build-args: |
             NEXT_PUBLIC_API_URL=${{ vars.NEXT_PUBLIC_API_URL }}
+            NEXT_PUBLIC_COGNITO_AUTHORITY=${{ vars.NEXT_PUBLIC_COGNITO_AUTHORITY }}
+            NEXT_PUBLIC_COGNITO_CLIENT_ID=${{ vars.NEXT_PUBLIC_COGNITO_CLIENT_ID }}
+            NEXT_PUBLIC_COGNITO_DOMAIN=${{ vars.NEXT_PUBLIC_COGNITO_DOMAIN }}
+            NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
 
